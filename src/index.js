@@ -1757,14 +1757,6 @@ const _startRenderLoop = () => {
         .toArray(gamepad.transformMatrix);
     }
 
-    // poll xr device events
-    for (let i = 0; i < windows.length; i++) {
-      const window = windows[i];
-      window[symbols.mrDisplaysSymbol].oculusVRDevice.session && window[symbols.mrDisplaysSymbol].oculusVRDevice.session.update();
-      window[symbols.mrDisplaysSymbol].openVRDevice.session && window[symbols.mrDisplaysSymbol].openVRDevice.session.update();
-      window[symbols.mrDisplaysSymbol].magicLeapARDevice.session && window[symbols.mrDisplaysSymbol].magicLeapARDevice.session.update();
-    }
-
     // poll operating system events
     nativeBindings.nativeWindow.pollEvents();
     if (args.performance) {
@@ -1791,13 +1783,15 @@ const _startRenderLoop = () => {
       timestamps.last = now;
     }
 
-    // trigger requestAnimationFrame
     if (args.frame || args.minimalFrame) {
       console.log('-'.repeat(80) + 'start frame');
     }
+
+    // tick animation frames    
     for (let i = 0; i < windows.length; i++) {
       windows[i].tickAnimationFrame();
     }
+    
     if (args.performance) {
       const now = Date.now();
       const diff = now - timestamps.last;
@@ -1805,6 +1799,8 @@ const _startRenderLoop = () => {
       timestamps.total += diff;
       timestamps.last = now;
     }
+    
+    // composite image
 
     _blit();
 
