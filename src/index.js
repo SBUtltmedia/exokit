@@ -365,26 +365,6 @@ const localQuaternion = new THREE.Quaternion();
 const localMatrix = new THREE.Matrix4();
 const localMatrix2 = new THREE.Matrix4();
 
-const vrPresentState = {
-  vrContext: null,
-  isPresenting: false,
-  system: null,
-  oculusSystem: null,
-  compositor: null,
-  glContext: null,
-  msFbo: null,
-  msTex: null,
-  msDepthTex: null,
-  fbo: null,
-  tex: null,
-  depthTex: null,
-  cleanups: null,
-  hasPose: false,
-  lmContext: null,
-  layers: [],
-};
-GlobalContext.vrPresentState = vrPresentState;
-
 class XRState {
   constructor() {
     const sab = new SharedArrayBuffer(4*1024);
@@ -468,6 +448,49 @@ class XRState {
   }
 }
 const xrState = GlobalContext.xrState = new XRState();
+
+const vrPresentState = {
+  vrContext: null,
+  isPresenting: false,
+  system: null,
+  oculusSystem: null,
+  compositor: null,
+  glContext: null,
+  msFbo: null,
+  msTex: null,
+  msDepthTex: null,
+  fbo: null,
+  tex: null,
+  depthTex: null,
+  cleanups: null,
+  hasPose: false,
+  lmContext: null,
+  layers: [],
+};
+GlobalContext.vrPresentState = vrPresentState;
+
+const mlPresentState = {
+  mlContext: null,
+  mlFbo: null,
+  mlTex: null,
+  mlDepthTex: null,
+  mlMsFbo: null,
+  mlMsTex: null,
+  mlMsDepthTex: null,
+  mlGlContext: null,
+  mlCleanups: null,
+  mlHasPose: false,
+  layers: [],
+};
+GlobalContext.mlPresentState = mlPresentState;
+
+const fakePresentState = {
+  fakeVrDisplay: null,
+  layers: [],
+};
+GlobalContext.fakePresentState = fakePresentState;
+GlobalContext.fakeVrDisplayEnabled = false;
+
 if (nativeBindings.nativeOculusVR) {
   nativeBindings.nativeOculusVR.requestPresent = function (layers) {
     const layer = layers.find(layer => layer && layer.source && layer.source.tagName === 'CANVAS');
@@ -736,20 +759,6 @@ if (nativeBindings.nativeOpenVR) {
     return Promise.resolve();
   };
 }
-const mlPresentState = {
-  mlContext: null,
-  mlFbo: null,
-  mlTex: null,
-  mlDepthTex: null,
-  mlMsFbo: null,
-  mlMsTex: null,
-  mlMsDepthTex: null,
-  mlGlContext: null,
-  mlCleanups: null,
-  mlHasPose: false,
-  layers: [],
-};
-GlobalContext.mlPresentState = mlPresentState;
 
 if (nativeBindings.nativeMl) {
   mlPresentState.mlContext = new nativeBindings.nativeMl();
@@ -964,12 +973,6 @@ if (nativeBindings.nativeMl) {
     s.on('error', () => {});
   }
 }
-
-const fakePresentState = {
-  fakeVrDisplay: null,
-  layers: [],
-};
-GlobalContext.fakePresentState = fakePresentState;
 
 nativeBindings.nativeWindow.setEventHandler((type, data) => {
   const {windowHandle} = data;
