@@ -1189,7 +1189,6 @@ const _startRenderLoop = () => {
 
         const isVisible = nativeWindow.isVisible(windowHandle) || vrPresentState.glContext === context || mlPresentState.mlGlContext === context;
         if (isVisible) {
-          const window = context.canvas.ownerDocument.defaultView;
           if (vrPresentState.glContext === context && vrPresentState.hasPose) {
             if (vrPresentState.layers.length > 0) {
               nativeWindow.composeLayers(context, vrPresentState.fbo, vrPresentState.layers, xrState);
