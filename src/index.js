@@ -132,50 +132,6 @@ const MLSDK_PORT = 17955;
 const windows = [];
 const contexts = [];
 
-nativeBindings.nativeCanvasRenderingContext2D.onconstruct = (ctx, canvas) => {
-  const canvasWidth = canvas.width || innerWidth;
-  const canvasHeight = canvas.height || innerHeight;
-
-  ctx.canvas = canvas;
-
-  const window = canvas.ownerDocument.defaultView;
-
-  const {nativeWindow} = nativeBindings;
-  const windowSpec = (() => {
-    if (!window[symbols.optionsSymbol].args.headless) {
-      try {
-        const firstWindowHandle = contexts.length > 0 ? contexts[0].getWindowHandle() : null;
-        return nativeWindow.create2d(canvasWidth, canvasHeight, firstWindowHandle);
-      } catch (err) {
-        console.warn(err.message);
-        return null;
-      }
-    } else {
-      return null;
-    }
-  })();
-
-  if (windowSpec) {
-    const [windowHandle, tex] = windowSpec;
-
-    ctx.setWindowHandle(windowHandle);
-    ctx.setTexture(tex, canvasWidth, canvasHeight);
-
-    ctx.destroy = (destroy => function() {
-      destroy.call(this);
-
-      nativeWindow.destroy(windowHandle);
-      canvas._context = null;
-
-      contexts.splice(contexts.indexOf(ctx), 1);
-    })(ctx.destroy);
-  } else {
-    ctx.destroy();
-  }
-
-  contexts.push(ctx);
-};
-
 const zeroMatrix = new THREE.Matrix4();
 const localFloat32PoseArray = new Float32Array(16*(1+2+maxNumTrackers));
 const localFloat32HmdPoseArray = new Float32Array(localFloat32PoseArray.buffer, localFloat32PoseArray.byteOffset + 0*Float32Array.BYTES_PER_ELEMENT*16, 16);
