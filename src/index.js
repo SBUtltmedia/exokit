@@ -159,7 +159,7 @@ const leftControllerQuaternionArray4 = new Float32Array(4);
 const rightControllerPositionArray3 = new Float32Array(3);
 const rightControllerQuaternionArray4 = new Float32Array(4);
 
-const handEntrySize = (1 + (5 * 5)) * (3 + 3);
+// const handEntrySize = (1 + (5 * 5)) * (3 + 3);
 const transformArray = new Float32Array(7 * 2);
 const projectionArray = new Float32Array(16 * 2);
 /* const handsArray = [
