@@ -414,7 +414,6 @@ const _onGl2DConstruct = (ctx, canvas) => {
   });
   // contexts.push(ctx);
 };
-};
 bindings.nativeCanvasRenderingContext2D = (nativeCanvasRenderingContext2D => {
   function CanvasRenderingContext2D(canvas) {
     const ctx = new nativeCanvasRenderingContext2D();
