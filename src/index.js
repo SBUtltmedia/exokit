@@ -257,7 +257,6 @@ const xrState = (() => {
     return result;
   })();
   result.id = _makeTypedArray(Uint32Array, 1);
-  result.numContexts = _makeTypedArray(Uint32Array, 1);
 
   return result;
 })();

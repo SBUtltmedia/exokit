@@ -320,8 +320,6 @@ const _onGl3DConstruct = (gl, canvas) => {
 
   gl.id = Atomics.add(GlobalContext.xrState.id, 0) + 1;
   GlobalContext.contexts.push(gl);
-
-  Atomics.add(GlobalContext.xrState.numContexts, 0);
 };
 bindings.nativeGl = (nativeGl => {
   function WebGLRenderingContext(canvas) {
@@ -397,8 +395,6 @@ const _onGl2DConstruct = (ctx, canvas) => {
 
   ctx.id = Atomics.add(GlobalContext.xrState.id, 0) + 1;
   GlobalContext.contexts.push(ctx);
-
-  Atomics.add(GlobalContext.xrState.numContexts, 0);
 };
 bindings.nativeCanvasRenderingContext2D = (nativeCanvasRenderingContext2D => {
   function CanvasRenderingContext2D(canvas) {
