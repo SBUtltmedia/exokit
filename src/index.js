@@ -275,9 +275,8 @@ const vrPresentState = {
   fbo: null,
   tex: null,
   depthTex: null,
-  cleanups: null,
   hasPose: false,
-  lmContext: null,
+  // lmContext: null,
   layers: [],
 };
 GlobalContext.vrPresentState = vrPresentState;
