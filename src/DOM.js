@@ -2008,8 +2008,7 @@ class HTMLIFrameElement extends HTMLSrcableElement {
                   });
                   const contentDocument = GlobalContext._parseDocument(htmlString, contentWindow);
 
-                  contentDocument.hidden = this.d === 3;
-
+                  contentDocument.hidden = this.d === 3; // XXX pass these to the child
                   contentDocument.xrOffset = this.xrOffset;
 
                   contentWindow.document = contentDocument;
