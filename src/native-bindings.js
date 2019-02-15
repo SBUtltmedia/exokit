@@ -287,7 +287,7 @@ const _onGl3DConstruct = (gl, canvas) => {
 
       if (gl.id === vrPresentState.glContextId) {
         throw new Error('destroyed vr presenting context');
-        /* nativeVr.VR_Shutdown();
+        /* bindings.nativeVr.VR_Shutdown();
 
         vrPresentState.glContextId = 0;
         vrPresentState.system = null;
@@ -578,8 +578,8 @@ GlobalContext.nativeMl = bindings.nativeMl;
 GlobalContext.nativeBrowser = bindings.nativeBrowser;
 GlobalContext.nativeOculusVR = bindings.nativeOculusVR;
 
-if (nativeOculusVR) {
-  nativeOculusVR.requestPresent = function (layers) {
+if (bindings.nativeOculusVR) {
+  bindings.nativeOculusVR.requestPresent = function (layers) {
     const layer = layers.find(layer => layer && layer.source && layer.source.tagName === 'CANVAS');
     if (layer) {
       const canvas = layer.source;
@@ -593,7 +593,7 @@ if (nativeOculusVR) {
         const windowHandle = context.getWindowHandle();
         nativeBindings.nativeWindow.setCurrentWindowContext(windowHandle);
 
-        const system = vrPresentState.system = vrPresentState.system || nativeBindings.nativeOculusVR.Oculus_Init();
+        const system = vrPresentState.system = vrPresentState.system || bindings.nativeOculusVR.Oculus_Init();
         const lmContext = vrPresentState.lmContext || (nativeBindings.nativeLm && new nativeBindings.nativeLm());
 
         const {width: halfWidth, height} = system.GetRecommendedRenderTargetSize();
@@ -690,14 +690,14 @@ if (nativeOculusVR) {
       throw new Error('no HTMLCanvasElement source provided');
     }
   }
-  nativeOculusVR.exitPresent = function () {
+  bindings.exitPresent = function () {
     return Promise.resolve();
   };
 }
 
-if (nativeOpenVR) {
+if (bindings.nativeOpenVR) {
   const cleanups = [];
-  nativeOpenVR.requestPresent = async function(layers) {
+  bindings.nativeOpenVR.requestPresent = async function(layers) {
     const layer = layers.find(layer => layer && layer.source && layer.source.tagName === 'CANVAS');
     if (layer) {
       const canvas = layer.source;
@@ -706,8 +706,8 @@ if (nativeOpenVR) {
         const {xrState} = GlobalContext;
         
         if (!xrState.isPresenting[0]) {
-          const vrContext = nativeVr.getContext();
-          const system = nativeVr.VR_Init(nativeVr.EVRApplicationType.Scene);
+          const vrContext = bindings.nativeVr.getContext();
+          const system = bindings.nativeVr.VR_Init(bindings.nativeVr.EVRApplicationType.Scene);
           const compositor = vrContext.compositor.NewCompositor();
 
           // const lmContext = vrPresentState.lmContext || (nativeLm && new nativeLm());
@@ -835,9 +835,9 @@ if (nativeOpenVR) {
       throw new Error('no HTMLCanvasElement source provided');
     }
   };
-  nativeOpenVR.exitPresent = async function() {
+  bindings.nativeOpenVR.exitPresent = async function() {
     if (vrPresentState.vrContext) {
-      nativeVr.VR_Shutdown();
+      bindings.nativeVr.VR_Shutdown();
       
       const {msFbo, msTex, msDepthTex, fbo, tex, depthTex} = vrPresentState;
 
