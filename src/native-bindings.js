@@ -837,7 +837,7 @@ if (nativeOpenVR) {
       throw new Error('no HTMLCanvasElement source provided');
     }
   };
-  nativeOpenVR.exitPresent = await function() {
+  nativeOpenVR.exitPresent = async function() {
     if (vrPresentState.vrContext) {
       nativeVr.VR_Shutdown();
       
