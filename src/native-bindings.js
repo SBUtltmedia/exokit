@@ -1,6 +1,14 @@
 const path = require('path');
 
-const exokitNode = require(path.join(__dirname, '..', 'build', 'Release', 'exokit.node'));
+const exokitNode = (() => {
+  if (typeof requireNative === 'undefined') {
+    const exokitNode = require(path.join(__dirname, '..', 'build', 'Release', 'exokit.node'));
+    require('worker-native').setNativeRequire('exokit.node', exokitNode.initFunctionAddress);
+    return exokitNode;
+  } else {
+    return requireNative('exokit.node');
+  }
+})();
 const {nativeWindow} = exokitNode;
 const webGlToOpenGl = require('webgl-to-opengl');
 const GlobalContext = require('./GlobalContext');
