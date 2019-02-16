@@ -1,7 +1,7 @@
 const parse5 = require('parse5');
 
 const DOM = require('./DOM');
-const {Event} = require('./Event');
+const {Event, EventTarget} = require('./Event');
 const GlobalContext = require('./GlobalContext');
 const symbols = require('./symbols');
 const utils = require('./utils');
@@ -248,6 +248,228 @@ function initDocument (document, window) {
   return document;
 }
 module.exports.initDocument = initDocument;
+
+const maxParallelResources = 8;
+class Resource {
+  constructor(getCb = (onprogress, cb) => cb(), value = 0.5, total = 1) {
+    this.getCb = getCb;
+    this.value = value;
+    this.total = total;
+    
+    this.onupdate = null;
+  }
+
+  setProgress(value) {
+    this.value = value;
+
+    this.onupdate && this.onupdate();
+  }
+  
+  get() {
+    return new Promise((accept, reject) => {
+      this.getCb(progress => {
+        this.setValue(progress);
+      }, err => {
+        if (!err) {
+          accept();
+        } else {
+          reject(err);
+        }
+      });
+    });
+  }
+  
+  destroy() {
+    this.setProgress(1);
+  }
+}
+class Resources extends EventTarget {
+  constructor() {
+    super();
+    
+    this.resources = [];
+    this.queue = [];
+    this.numRunning = 0;
+  }
+
+  getValue() {
+    let value = 0;
+    for (let i = 0; i < this.resources.length; i++) {
+      value += this.resources[i].value;
+    }
+    return value;
+  }
+  getTotal() {
+    let total = 0;
+    for (let i = 0; i < this.resources.length; i++) {
+      total += this.resources[i].total;
+    }
+    return total;
+  }
+  getProgress() {
+    let value = 0;
+    let total = 0;
+    for (let i = 0; i < this.resources.length; i++) {
+      const resource = this.resources[i];
+      value += resource.value;
+      total += resource.total;
+    }
+    return total > 0 ? (value / total) : 1;
+  }
+
+  addResource(getCb) {
+    return new Promise((accept, reject) => {
+      const resource = new Resource(getCb);
+      resource.onupdate = () => {
+        if (resource.value >= resource.total) {
+          this.resources.splice(this.resources.indexOf(resource), 1);
+          
+          resource.onupdate = null;
+          
+          accept();
+        }
+
+        const e = new Event('update');
+        e.value = this.getValue();
+        e.total = this.getTotal();
+        e.progress = this.getProgress();
+        this.dispatchEvent(e);
+      };
+      this.resources.push(resource);
+      this.queue.push(resource);
+      
+      this.drain();
+    });
+  }
+  
+  drain() {
+    if (this.queue.length > 0 && this.numRunning < maxParallelResources) {
+      const resource = this.queue.shift();
+      resource.get()
+        .catch(err => {
+          console.warn(err.stack);
+        })
+        .finally(() => {
+          resource.destroy();
+          
+          this.numRunning--;
+          
+          this.drain();
+        });
+      
+      this.numRunning++;
+    } else {
+      const _isDone = () => this.numRunning === 0 && this.queue.length === 0;
+      if (_isDone()) {
+        process.nextTick(() => { // wait one tick for more resources before emitting drain
+          if (_isDone()) {
+            this.emit('drain');
+          }
+        });
+      }
+    }
+  }
+}
+GlobalContext.Resources = Resources;
+
+const _fromAST = (node, window, parentNode, ownerDocument, uppercase) => {
+  if (node.nodeName === '#text') {
+    const text = new DOM.Text(node.value);
+    text.parentNode = parentNode;
+    text.ownerDocument = ownerDocument;
+    return text;
+  } else if (node.nodeName === '#comment') {
+    const comment = new DOM.Comment(node.data);
+    comment.parentNode = parentNode;
+    comment.ownerDocument = ownerDocument;
+    return comment;
+  } else {
+    let {tagName} = node;
+    if (tagName && uppercase) {
+      tagName = tagName.toUpperCase();
+    }
+    let {attrs, value, content, childNodes, sourceCodeLocation} = node;
+    const HTMLElementTemplate = window[symbols.htmlTagsSymbol][tagName];
+    const location = sourceCodeLocation  ? {
+      line: sourceCodeLocation.startLine,
+      col: sourceCodeLocation.startCol,
+    } : null;
+    const element = HTMLElementTemplate ?
+      new HTMLElementTemplate(
+        attrs,
+        value,
+        location,
+      )
+    :
+      new DOM.HTMLElement(
+        tagName,
+        attrs,
+        value,
+        location,
+      );
+    element.parentNode = parentNode;
+    if (!ownerDocument) { // if there is no owner document, it's us
+      ownerDocument = element;
+      ownerDocument.defaultView = window;
+    }
+    element.ownerDocument = ownerDocument;
+    if (content) {
+      element.childNodes = new DOM.NodeList(
+        content.childNodes.map(childNode =>
+          _fromAST(childNode, window, element, ownerDocument, uppercase)
+        )
+      );
+    } else if (childNodes) {
+      element.childNodes = new DOM.NodeList(
+        childNodes.map(childNode =>
+          _fromAST(childNode, window, element, ownerDocument, uppercase)
+        )
+      );
+    }
+    return element;
+  }
+};
+module.exports._fromAST = _fromAST;
+GlobalContext._fromAST = _fromAST;
+
+// To "run" the HTML means to walk it and execute behavior on the elements such as <script src="...">.
+// Each candidate element exposes a method on runSymbol which returns whether to await the element load or not.
+const _runHtml = (element, window) => {
+  if (element instanceof DOM.HTMLElement) {
+    return new Promise((accept, reject) => {
+      const {document} = window;
+
+      element.traverse(el => {
+        const {id} = el;
+        if (id) {
+          el._emit('attribute', 'id', id);
+        }
+
+        if (el[symbols.runSymbol]) {
+          document[symbols.addRunSymbol](el[symbols.runSymbol].bind(el));
+        }
+
+        if (/\-/.test(el.tagName)) {
+          const constructor = window.customElements.get(el.tagName);
+          if (constructor) {
+            window.customElements.upgrade(el, constructor);
+          }
+        }
+      });
+      if (document[symbols.runningSymbol]) {
+        document.once('flush', () => {
+          accept();
+        });
+      } else {
+        accept();
+      }
+    });
+  } else {
+    return Promise.resolve();
+  }
+};
+module.exports._runHtml = _runHtml;
+GlobalContext._runHtml = _runHtml;
 
 class DocumentType {}
 module.exports.DocumentType = DocumentType;
