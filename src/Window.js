@@ -1160,7 +1160,7 @@ const _normalizeUrl = utils._makeNormalizeUrl(options.baseUrl);
       localCbs[i] = null;
     }
   };
-  const _tickAnimationFrameRaf = top => () => {
+  const _tickAnimationFrameRaf = async top => () => {
     const currentWindowContext = nativeWindow.getCurrentWindowContext();
     const childSyncs = (await Promise.all(windows.map(window => window.tickAnimationFrame(currentWindowContext ? 'child' : 'top')))).flat();
     for (let i = 0; i < GlobalContext.contexts.length; i++) {
