@@ -1824,8 +1824,3 @@ const _normalizeUrl = utils._makeNormalizeUrl(options.baseUrl);
 global.require = undefined;
 global.process = undefined;
 global.setImmediate = undefined;
-const _logStack = err => {
-  console.warn(err);
-};
-process.on('uncaughtException', _logStack);
-process.on('unhandledRejection', _logStack);
