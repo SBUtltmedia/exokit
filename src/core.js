@@ -1,16 +1,6 @@
 const url = require('url');
 const {URL} = url;
 
-const {
-  Element,
-  HTMLElement,
-  Node,
-  NodeList,
-  Text,
-  Comment,
-} = require('./DOM');
-const {Event, EventTarget} = require('./Event');
-
 const fetch = require('window-fetch');
 const GlobalContext = require('./GlobalContext');
 const symbols = require('./symbols');
