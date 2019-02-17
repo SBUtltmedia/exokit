@@ -157,6 +157,8 @@ const {_elementGetter, _elementSetter, _download} = utils;
 const btoa = s => Buffer.from(s, 'binary').toString('base64');
 const atob = s => Buffer.from(s, 'base64').toString('binary');
 
+const isMac = os.platform() === 'darwin';
+
 const zeroMatrix = new THREE.Matrix4();
 const localFloat32PoseArray = new Float32Array(16*(1+2+maxNumTrackers));
 const localFloat32HmdPoseArray = new Float32Array(localFloat32PoseArray.buffer, localFloat32PoseArray.byteOffset + 0*Float32Array.BYTES_PER_ELEMENT*16, 16);
