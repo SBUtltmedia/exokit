@@ -238,7 +238,7 @@ const _onGl3DConstruct = (gl, canvas) => {
           break;
         }
         case 'quit': {
-          context.destroy();
+          gl.destroy();
           break;
         }
       }
