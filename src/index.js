@@ -222,7 +222,8 @@ const xrState = (() => {
     return result;
   })();
   result.id = _makeTypedArray(Uint32Array, 1);
-
+  result.fakeVrDisplayEnabled = _makeTypedArray(Uint32Array, 1);
+  
   return result;
 })();
 GlobalContext.xrState = xrState;
@@ -253,8 +254,6 @@ topRequestContext.setSyncHandler(m => {
   }
 });
 nativeWorker.setTopRequestContext(topRequestContext);
-
-GlobalContext.fakeVrDisplayEnabled = false; // XXX globalize this
 
 let innerWidth = 1280; // XXX do not track this globally
 let innerHeight = 1024;
