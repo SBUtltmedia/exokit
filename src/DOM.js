@@ -2016,7 +2016,7 @@ class HTMLIFrameElement extends HTMLSrcableElement {
                     top,
                     htmlString,
                     hidden: this.d === 3,
-                    xrOffset: this.xrOffset,
+                    xrOffsetBuffer: this.xrOffset._buffer,
                   });
 
                   this.contentWindow = contentWindow;
