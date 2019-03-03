@@ -285,7 +285,7 @@ const _startTopRenderLoop = () => {
     }
 
     // poll operating system events
-    nativeBindings.nativeWindow.pollEvents();
+    topRequestContext.runSyncTop(nativeBindings.nativeWindow.pollEvents.functionAddress, new Uint32Array(0));
     if (args.performance) {
       const now = Date.now();
       const diff = now - timestamps.last;
