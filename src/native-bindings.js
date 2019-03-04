@@ -842,7 +842,7 @@ if (bindings.nativeOpenVR) {
 
         // vrPresentState.lmContext = lmContext;
 
-        const framebuffer = {
+        context.framebuffer = {
           width,
           height,
           msFbo,
@@ -859,7 +859,6 @@ if (bindings.nativeOpenVR) {
         xrState.renderHeight[0] = height;
 
         const context = GlobalContext.contexts.find(context => context.window === window && context.id === id);
-        context.framebuffer = framebuffer;
         vrPresentState.glContextId = context.id;
         vrPresentState.msFbo = msFbo;
         vrPresentState.msTex = msTex;
@@ -882,7 +881,7 @@ if (bindings.nativeOpenVR) {
           canvas.removeListener('attribute', _attribute);
         });
 
-        return framebuffer;
+        return context.framebuffer;
       } else if (canvas.ownerDocument.framebuffer) {
         const {width, height} = canvas;
         const {msFbo, msTex, msDepthTex, fbo, tex, depthTex} = canvas.ownerDocument.framebuffer;
@@ -1015,7 +1014,6 @@ if (bindings.nativeMl) {
         const {mlPresentState} = GlobalContext;
         mlPresentState.mlContext.SetContentTexture(tex);
 
-        const context = GlobalContext.contexts.find(context => context.window === window && context.id === id);
         context.framebuffer = {
           width,
           height,
