@@ -386,7 +386,7 @@ const _onGl2DConstruct = (ctx, canvas) => {
     ctx.destroy = (destroy => function() {
       destroy.call(this);
       
-      nativeWindow.destroy(windowHandle);
+      nativeWindow.destroyWindowHandle(windowHandle);
       canvas._context = null;
       
       window.postInternalMessage({
