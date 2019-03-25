@@ -64,6 +64,7 @@ const _onGl3DConstruct = (gl, canvas) => {
   const canvasWidth = canvas.width || innerWidth;
   const canvasHeight = canvas.height || innerHeight;
 
+  gl.d = 3;
   gl.canvas = canvas;
 
   const document = canvas.ownerDocument;
@@ -358,6 +359,7 @@ const _onGl2DConstruct = (ctx, canvas) => {
   const canvasWidth = canvas.width || innerWidth;
   const canvasHeight = canvas.height || innerHeight;
 
+  ctx.d = 2;
   ctx.canvas = canvas;
 
   const window = canvas.ownerDocument.defaultView;
