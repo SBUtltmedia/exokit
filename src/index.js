@@ -301,7 +301,7 @@ const _startTopRenderLoop = () => {
     }
 
     // tick animation frames
-    await Promise.all(windows.map(window => window.tickAnimationFrame('top')));
+    await Promise.all(windows.map(window => window.tickAnimationFrame('rafTop')));
     
     if (args.performance) {
       const now = Date.now();
@@ -311,7 +311,7 @@ const _startTopRenderLoop = () => {
       timestamps.last = now;
     }
 
-    await Promise.all(windows.map(window => window.tickAnimationFrame('submit')));
+    await Promise.all(windows.map(window => window.tickAnimationFrame('submitTop')));
 
     // lastFrameTime = Date.now()
 
