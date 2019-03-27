@@ -285,6 +285,7 @@ const _startTopRenderLoop = () => {
     }
 
     // update media frames
+    nativeBindings.nativeWindow.pollEvents && nativeBindings.nativeWindow.pollEvents();
     nativeBindings.nativeVideo.Video.updateAll();
     nativeBindings.nativeBrowser.Browser.updateAll();
 
