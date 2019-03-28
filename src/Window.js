@@ -1599,7 +1599,7 @@ const _normalizeUrl = utils._makeNormalizeUrl(options.baseUrl);
       // prepare magic leap frame
       mlPresentState.mlContext.PrepareFrame(
         mlGlContext, // gl context for depth population
-        mlPresentState.mlMsFbo,
+        mlPresentState.mlFbo,
         xrState.renderWidth[0]*2,
         xrState.renderHeight[0],
       );
