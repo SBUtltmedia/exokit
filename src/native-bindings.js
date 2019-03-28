@@ -832,17 +832,6 @@ if (bindings.nativeOpenVR) {
         };
       } else {
         return presentSpec;
-        /* const {msFbo, msTex, msDepthTex, fbo, tex, depthTex} = vrPresentState;
-        return {
-          width: xrState.renderWidth[0] * 2,
-          height: xrState.renderHeight[0],
-          msFbo,
-          msTex,
-          msDepthTex,
-          fbo,
-          tex,
-          depthTex,
-        }; */
       }
     } else {
       throw new Error('no HTMLCanvasElement source provided');
@@ -995,16 +984,6 @@ if (bindings.nativeMl) {
         };
       } else {
         return presentSpec;
-        /* return {
-          width: xrState.renderWidth[0] * 2,
-          height: xrState.renderHeight[0],
-          msFbo: mlPresentState.mlMsFbo,
-          msTex: mlPresentState.mlMsTex,
-          msDepthTex: mlPresentState.mlMsDepthTex,
-          fbo: mlPresentState.mlFbo,
-          tex: mlPresentState.mlTex,
-          depthTex: mlPresentState.mlDepthTex,
-        }; */
       }
     } else {
       throw new Error('no HTMLCanvasElement source provided');
