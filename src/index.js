@@ -772,7 +772,7 @@ if (nativeBindings.nativeOculusMobileVr) {
 
         // fps = VR_FPS;
 
-        const vrContext = oculusMobileVrPresentState.vrContext = oculusMobileVrPresentState.vrContext || nativeBindings.nativeOculusMobileVr.OculusMobile_Init();
+        const vrContext = oculusMobileVrPresentState.vrContext = oculusMobileVrPresentState.vrContext || nativeBindings.nativeOculusMobileVr.OculusMobile_Init(context.getWindowHandle());
 
         const {width: halfWidth, height} = vrContext.GetRecommendedRenderTargetSize();
         const MAX_TEXTURE_SIZE = 4096;
@@ -1710,9 +1710,7 @@ const _startRenderLoop = () => {
         timestamps.last = now;
       }
     } else if (oculusMobileVrPresentState.vrContext) {
-      const windowHandle = oculusMobileVrPresentState.glContext.getWindowHandle();
       oculusMobileVrPresentState.hasPose = oculusMobileVrPresentState.vrContext.WaitGetPoses(
-        windowHandle,
         oculusMobilePoseFloat32Array
       );
 
