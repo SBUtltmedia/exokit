@@ -1381,7 +1381,7 @@ const _makeWindow = (options = {}, parent = null, top = null) => {
       GlobalContext.vrPresentState.layers = layers;
     };
 
-    const oculusMobileVrDevice = new XR.XRDevice('OculusMobileVR');
+    const oculusMobileVrDevice = new XR.XRDevice('OculusMobileVR', window);
     oculusMobileVrDevice.onrequestpresent = layers => nativeOculusMobileVr.requestPresent(layers);
     oculusMobileVrDevice.onexitpresent = () => nativeOculusMobileVr.exitPresent();
     oculusMobileVrDevice.onrequestanimationframe = _makeRequestAnimationFrame(window);
