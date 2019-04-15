@@ -300,7 +300,7 @@ const _onGl3DConstruct = (gl, canvas) => {
 
       if (gl.id === GlobalContext.vrPresentState.glContextId) {
         throw new Error('destroyed vr presenting context');
-        /* bindings.nativeVr.VR_Shutdown();
+        /* bindings.nativeOpenVR.VR_Shutdown();
 
         GlobalContext.vrPresentState.glContextId = 0;
         GlobalContext.vrPresentState.system = null;
@@ -717,8 +717,8 @@ if (bindings.nativeOpenVR) {
         const {vrPresentState} = GlobalContext;
 
         if (!xrState.isPresenting[0]) {
-          const vrContext = bindings.nativeVr.getContext();
-          const system = bindings.nativeVr.VR_Init(bindings.nativeVr.EVRApplicationType.Scene);
+          const vrContext = bindings.nativeOpenVR.getContext();
+          const system = bindings.nativeOpenVR.VR_Init(bindings.nativeOpenVR.EVRApplicationType.Scene);
           const compositor = vrContext.compositor.NewCompositor();
 
           // const lmContext = vrPresentState.lmContext || (nativeLm && new nativeLm());
@@ -838,7 +838,7 @@ if (bindings.nativeOpenVR) {
     const {vrPresentState} = GlobalContext;
 
     if (vrPresentState.vrContext) {
-      bindings.nativeVr.VR_Shutdown();
+      bindings.nativeOpenVR.VR_Shutdown();
       
       const {msFbo, msTex, msDepthTex, fbo, tex, depthTex} = vrPresentState;
 
